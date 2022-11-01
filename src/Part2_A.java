@@ -1,10 +1,15 @@
 import java.io.*;
 
+/*
+This will solve the Striking Edge Zero game using recursion. It is O(n) since it at most run through the whole array
+before stopping.
+ */
+
 public class Part2_A {
     public static void main(String[] args) throws IOException {
-        int nbrofinputs = readnbrofinputs("file.txt");
+        int nbrofinputs = readnbrofinputs("Part2_A_in.txt");
         String input[] = new String[nbrofinputs];
-        readinputs("file.txt", nbrofinputs, input);
+        readinputs("Part2_A_in.txt", nbrofinputs, input);
 
         int arr[][] = new int[nbrofinputs][];
 
@@ -18,9 +23,20 @@ public class Part2_A {
             arr[i] = tempint;
         }
 
+        PrintWriter writer = new PrintWriter("Part2_A_out.txt");
         for(int i = 0; i < nbrofinputs; i++){
-            System.out.println(EdgeZero(arr[i], 0));
+            boolean temp = EdgeZero(arr[i], 0, 0, 0);
+            int value = 0;
+            if(temp == true){
+                value = 1;
+            }
+            if(temp == false){
+                value = 0;
+            }
+            writer.write("For game " + (i+1) + " the answer is " + value + "\n");
         }
+        writer.close();
+
     }
 
     //find the nbr of inputs
@@ -31,6 +47,7 @@ public class Part2_A {
                 int inputs = Integer.parseInt(line.trim());
                 return inputs;
             }
+        br.close();
         return 0;
     }
 
@@ -42,9 +59,10 @@ public class Part2_A {
             String temp = br.readLine();
             input[i] = temp.substring(temp.indexOf(" 0")+3) + " 0";
         }
+        br.close();
     }
 
-    private static boolean EdgeZero(int arr[], int position) {
+    private static boolean EdgeZero(int arr[], int position, int index, int count) {
         //validity check
         if(position<0 || position >=arr.length){
             return false;
@@ -61,7 +79,7 @@ public class Part2_A {
 
         //checking if the values around it are 1
         if(arr[position] == 1 && (arr[right] == 1 || arr[left] == 1)){
-            return EdgeZero(arr, right);
+            return EdgeZero(arr, right, index, count);
         }
 
         //checking if it goes back to the same step
@@ -71,24 +89,34 @@ public class Part2_A {
 
         //right side is out of bounds so we do the left side
         if(right >= arr.length && left >= 0){
-            return EdgeZero(arr, left);
+            return EdgeZero(arr, left, index, count);
         }
 
         //right side because left side is out of bounds
         if(left < 0 && right < arr.length){
-            return EdgeZero(arr, right);
+            return EdgeZero(arr, right, index, count);
         }
 
         //check both left and right
         if(left >= 0 && right <= arr.length){
-            if(EdgeZero(arr, left)){
+            //store the index arr and if index == org ind, return false
+            if(position == index){
+                return false;
+            }
+
+            if(count == 0){
+                index = position;
+                count++;
+            }
+
+            if(EdgeZero(arr, left, index, count)){
                 return true;
             }
-            if(EdgeZero(arr, right)){
+
+            if(EdgeZero(arr, right, index, count)){
                 return true;
             }
         }
-
         //returns false if nothing is found
         return false;
     }

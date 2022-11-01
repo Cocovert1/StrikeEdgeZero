@@ -1,0 +1,3 @@
+For game 1 the answer is 1
+For game 2 the answer is 0
+For game 3 the answer is 1
