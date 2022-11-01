@@ -83,7 +83,7 @@ public class Part2_A {
         }
 
         //checking if it goes back to the same step
-        if(left >= 0 && arr[position] == arr[left]){
+        if(left >= 0 && arr[position] == arr[left] && right >= arr.length){
             return false;
         }
 
